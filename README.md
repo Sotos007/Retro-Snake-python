@@ -35,6 +35,7 @@ Ensure you have Python installed. You can install the required **Pygame** librar
 
 ```bash
 pip install pygame
+pip install -r requirements.txt
 ```
 ---
 ## Running the Game
@@ -53,17 +54,18 @@ python main.py
 ```
 ---
 ## 🎮 Controls
-    * **Arrow Keys**: Navigate the Snake.
-    * **SPACE**: Start Game / Restart after Game Over.
-    * **ENTER**: Pause or Resume the game.
-    * **ESC**: Exit the application (available on the Game Over screen).
+ * **Arrow Keys**: Navigate the Snake.
+ * **SPACE**: Start Game / Restart after Game Over.
+ * **ENTER**: Pause or Resume the game.
+ * **ESC**: Exit the application (available on the Game Over screen).
 ---
 ## 🛠️ Technical Overview
 The project follows an Object-Oriented Programming (OOP) structure:
-    * **Snake Class**: Handles coordinate math, body segment growth, and self-collision.
-    * **Fruit Class**: Manages randomized placement and texture selection logic.
-    * **Background Class**: Controls UI state transitions and background rendering.
-    * **Performance**: Implements pre-loading and surface conversion (.convert_alpha()) for optimal frame rates.
+
+   * **Snake Class**: Handles coordinate math, body segment growth, and self-collision.
+   * **Fruit Class**: Manages randomized placement and texture selection logic.
+   * **Background Class**: Controls UI state transitions and background rendering.
+   * **Performance**: Implements pre-loading and surface conversion (.convert_alpha()) for optimal frame rates.
 
 
 
