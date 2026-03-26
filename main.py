@@ -4,41 +4,41 @@ import random
 import pygame.mixer
 import logging
 
-# Ρύθμιση Verbose Logging
+# Verbose Logging Configuration
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
 
-# Αρχικοποίηση του Pygame
+# Initialize Pygame
 pygame.init()
-logging.info("Το Pygame αρχικοποιήθηκε επιτυχώς.")
+logging.info("Pygame initialized successfully.")
 
-# Διαστάσεις του παραθύρου
+# Window Dimensions
 WIDTH, HEIGHT = 800, 600
 
-# Χρώματα
+# Colors
 WHITE = (255, 255, 255)
 BLACK = (0, 0, 0)
 
-# Δημιουργία του παραθύρου του παιχνιδιού
+# Create Game Window
 screen = pygame.display.set_mode((WIDTH, HEIGHT))
-pygame.display.set_caption("Φιδάκι - Pro Edition")
+pygame.display.set_caption("Snake Game - Pro Edition")
 
-# Προ-φόρτωση στατικών textures
+# Pre-load Static Textures
 try:
     border_texture = pygame.image.load("border.png").convert_alpha()
     border_texture = pygame.transform.scale(border_texture, (20, 20))
     grass_map_img = pygame.image.load("Map_bg.png").convert()
-    logging.info("Τα βασικά textures φορτώθηκαν.")
+    logging.info("Core textures loaded successfully.")
 except Exception as e:
-    logging.error(f"Σφάλμα κατά τη φόρτωση των textures: {e}")
+    logging.error(f"Error loading textures: {e}")
 
-# Φόρτωση και αναπαραγωγή μουσικής
+# Music Loading and Playback
 try:
     pygame.mixer.music.load("sound.mp3")
     pygame.mixer.music.set_volume(0.02)
     pygame.mixer.music.play(-1)
-    logging.info("Η μουσική ξεκίνησε.")
+    logging.info("Background music started.")
 except:
-    logging.warning("Το αρχείο sound.mp3 δεν βρέθηκε.")
+    logging.warning("File sound.mp3 not found.")
 
 class Snake:
     def __init__(self):
@@ -54,11 +54,14 @@ class Snake:
         self.game_over_sound_played = False
         
         # Pre-load snake assets
-        self.head_img = pygame.image.load("head1.png").convert_alpha()
-        self.body_img = pygame.image.load("body1.png").convert_alpha()
-        self.eat_sound = pygame.mixer.Sound("eat.mp3")
-        self.eat_sound.set_volume(0.2)
-        logging.info("Το φίδι αρχικοποιήθηκε.")
+        try:
+            self.head_img = pygame.image.load("head1.png").convert_alpha()
+            self.body_img = pygame.image.load("body1.png").convert_alpha()
+            self.eat_sound = pygame.mixer.Sound("eat.mp3")
+            self.eat_sound.set_volume(0.2)
+            logging.info("Snake entity initialized.")
+        except:
+            logging.error("Snake textures or sounds missing.")
 
     def get_head_position(self):
         return self.positions[0]
@@ -85,13 +88,13 @@ class Snake:
 
             new = (((cur[0] + (x * 20)) % WIDTH), (cur[1] + (y * 20)) % HEIGHT)
 
-            # Έλεγχος σύγκρουσης
+            # Collision Detection
             if new[0] < 20 or new[0] >= WIDTH - 20 or new[1] < 20 or new[1] >= HEIGHT - 20:
                 self.game_over = True
-                logging.info(f"Game Over! Σύγκρουση με τοίχο στη θέση {new}")
+                logging.info(f"Game Over! Wall collision at {new}")
             elif len(self.positions) > 2 and new in self.positions[2:]:
                 self.game_over = True
-                logging.info("Game Over! Σύγκρουση με το σώμα.")
+                logging.info("Game Over! Self-collision detected.")
             else:
                 self.positions.insert(0, new)
                 if len(self.positions) > self.length:
@@ -103,11 +106,11 @@ class Snake:
                     self.fruits_eaten += 1
                     self.eat_sound.play()
                     fruit.randomize_position()
-                    logging.info(f"Φρούτο φαγώθηκε. Score: {self.score}")
+                    logging.info(f"Fruit eaten. Current Score: {self.score}")
 
                     if self.fruits_eaten % 3 == 0:
                         self.speed += 0.3
-                        logging.info(f"Η ταχύτητα αυξήθηκε: {self.speed}")
+                        logging.info(f"Speed increased to: {self.speed}")
 
                     if self.score > highscore and not self.new_high_score_flag:
                         self.new_high_score_flag = True
@@ -115,17 +118,17 @@ class Snake:
                             new_highscore_sound = pygame.mixer.Sound("high.mp3")
                             new_highscore_sound.set_volume(0.35)
                             new_highscore_sound.play()
-                            logging.info("Νέο High Score!")
+                            logging.info("New High Score achieved!")
                         except: pass
 
     def reset(self):
         self.__init__()
-        logging.info("Το παιχνίδι έγινε reset.")
+        logging.info("Game reset successfully.")
 
     def render(self, surface):
         surface.blit(grass_map_img, (0, 0))
 
-        # Render σώμα και κεφάλι
+        # Render Body and Head
         for i, p in enumerate(self.positions):
             if i == 0:
                 rotated_head = pygame.transform.rotate(
@@ -136,7 +139,7 @@ class Snake:
                     pygame.transform.scale(self.body_img, (20, 26)), -90 * self.direction)
                 surface.blit(rotated_body, p)
 
-        # Borders
+        # Draw Borders
         for i in range(0, WIDTH, 20):
             surface.blit(border_texture, (i, 0))
             surface.blit(border_texture, (i, HEIGHT - 20))
@@ -154,7 +157,7 @@ class Fruit:
                 pygame.image.load("cherry.png").convert_alpha()
             ]
         except:
-            logging.error("Δεν βρέθηκαν οι εικόνες των φρούτων.")
+            logging.error("Fruit textures not found.")
             self.textures = []
         self.randomize_position()
 
@@ -178,7 +181,7 @@ class Background:
             self.image = pygame.image.load("Main_Menu.png").convert()
             self.game_over_image = pygame.image.load("Game_Over.png").convert()
         except:
-            logging.warning("Background images missing.")
+            logging.warning("Background assets missing.")
         self.rect = self.image.get_rect(topleft=(-100, 0))
         self.game_over_rect = self.game_over_image.get_rect(center=(WIDTH // 2, HEIGHT // 2))
         self.show_game_over = False
@@ -199,9 +202,9 @@ def load_highscore():
 def save_highscore(score):
     with open("highscore.txt", "w") as file:
         file.write(str(score))
-    logging.info(f"Το highscore {score} αποθηκεύτηκε.")
+    logging.info(f"High score {score} saved to file.")
 
-# Αρχικοποίηση αντικειμένων
+# Object Initialization
 game_over_sound = None
 try:
     game_over_sound = pygame.mixer.Sound("game_over.mp3")
@@ -236,17 +239,17 @@ while True:
                     sys.exit()
             elif not in_main_menu and event.key == pygame.K_RETURN:
                 snake.paused = not snake.paused
-                logging.info(f"Pause toggled: {snake.paused}")
+                logging.info(f"Pause toggled. Status: {snake.paused}")
 
     if in_main_menu:
         screen.fill(WHITE)
         background.render(screen)
         font = pygame.font.Font(None, 36)
-        title = font.render("Καλώς ήρθες στο Φιδάκι!", True, BLACK)
-        subtitle = font.render("Πάτησε SPACE για να ξεκινήσεις", True, BLACK)
+        title = font.render("Welcome to Snake Game!", True, BLACK)
+        subtitle = font.render("Press SPACE to Start", True, BLACK)
         hs_text = font.render(f"High Score: {highscore}", True, BLACK)
         screen.blit(title, (WIDTH // 2 - 150, HEIGHT // 2 - 50))
-        screen.blit(subtitle, (WIDTH // 2 - 180, HEIGHT // 2 + 20))
+        screen.blit(subtitle, (WIDTH // 2 - 120, HEIGHT // 2 + 20))
         screen.blit(hs_text, (WIDTH // 2 - 80, HEIGHT // 2 + 100))
     else:
         if not snake.paused:
@@ -261,7 +264,7 @@ while True:
             background.render(screen)
             
             font = pygame.font.Font(None, 30)
-            restart_text = font.render(f"SPACE για Επανεκκίνηση | Score: {snake.score}", True, WHITE)
+            restart_text = font.render(f"Press SPACE to Restart | Score: {snake.score}", True, WHITE)
             screen.blit(restart_text, (WIDTH // 2 - 180, HEIGHT // 2 + 200))
 
             if snake.score > highscore:
@@ -270,7 +273,7 @@ while True:
                 show_highscore_message = True
             
             if show_highscore_message:
-                msg = font.render("ΝΕΟ HIGH SCORE!", True, WHITE)
+                msg = font.render("NEW HIGH SCORE!", True, WHITE)
                 screen.blit(msg, (WIDTH // 2 - 100, HEIGHT // 2 + 150))
         else:
             snake.render(screen)
