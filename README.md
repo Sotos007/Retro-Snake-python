@@ -42,7 +42,7 @@ pip install -r requirements.txt
 
 ### 1.Clone the repository:
 ```Bash
-git clone [https://github.com/Sotos007/Retro-Snake-python.git](https://github.co
+git clone [https://github.com/Sotos007/Retro-Snake-python.git]
 ```
 ### 2.Navigate to the directory:
 ```Bash
@@ -66,9 +66,3 @@ The project follows an Object-Oriented Programming (OOP) structure:
    * **Fruit Class**: Manages randomized placement and texture selection logic.
    * **Background Class**: Controls UI state transitions and background rendering.
    * **Performance**: Implements pre-loading and surface conversion (.convert_alpha()) for optimal frame rates.
-
-
-
-
-
-
